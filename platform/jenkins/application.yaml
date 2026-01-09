@@ -19,7 +19,7 @@ spec:
           - $values/platform/jenkins/values.yaml
 
     # 2) Your Git repo (where values live)
-    - repoURL: https://github.com/sebrakoczy/GitOps/tree/main/platform/jenkins
+    - repoURL: https://github.com/sebrakoczy/GitOps.git 
       targetRevision: main
       ref: values
 
