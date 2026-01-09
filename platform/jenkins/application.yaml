@@ -30,3 +30,12 @@ spec:
     syncOptions:
       - CreateNamespace=true
 
+  ignoreDifferences:
+  - group: ""
+    kind: Secret
+    name: jenkins
+    namespace: jenkins
+    jsonPointers:
+      - /data
+      - /stringData
+      - /metadata/annotations
