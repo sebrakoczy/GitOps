@@ -1,0 +1,29 @@
+controller:
+  persistence:
+    enabled: true
+    storageClass: longhorn
+    size: 20Gi
+
+  runAsUser: 1000
+  fsGroup: 1000
+
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: "2"
+      memory: 4Gi
+
+rbac:
+  create: true
+
+serviceAccount:
+  create: true
+  name: jenkins
+
+agent:
+  enabled: true
+  image: jenkins/inbound-agent
+  tag: latest
+
