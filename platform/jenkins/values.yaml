@@ -3,7 +3,6 @@ controller:
     enabled: true
     storageClass: longhorn
     size: 20Gi
-
   installPlugins:
     - kubernetes
     - workflow-aggregator
