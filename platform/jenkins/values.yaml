@@ -21,7 +21,7 @@ controller:
                 jenkinsUrl: "http://jenkins.jenkins.svc.cluster.local:8080"
                 jenkinsTunnel: "jenkins-agent.jenkins.svc.cluster.local:50000"
                 containerCapStr: "20"
-                skipTlsVerify: true
+                skipTlsVerify: "true"
                 templates:
                   - name: "default"
                     namespace: "jenkins"
@@ -29,8 +29,7 @@ controller:
                     idleMinutes: 2
                     serviceAccount: "jenkins"
                     nodeUsageMode: "NORMAL"
-                    nodeSelector:
-                      node-role: worker
+                    nodeSelector: "node-role=worker"
                     containers:
                       - name: "jnlp"
                         image: "jenkins/inbound-agent:latest"
