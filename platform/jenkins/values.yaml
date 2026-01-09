@@ -33,8 +33,9 @@ serviceAccount:
 
 agent:
   enabled: true
-  image: jenkins/inbound-agent
-  tag: latest
+  image:
+    repository: jenkins/inbound-agent
+    tag: latest
   resources:
     requests:
       cpu: 200m
