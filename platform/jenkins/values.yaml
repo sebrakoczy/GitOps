@@ -8,7 +8,7 @@ controller:
     - kubernetes
     - workflow-aggregator
     - git
-    - configuration-as-code
+    - configuration-as-code:1963.v24e046127a_3f
 
   runAsUser: 1000
   fsGroup: 1000
