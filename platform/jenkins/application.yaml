@@ -8,13 +8,21 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: jenkins
-  source:
-    repoURL: https://charts.jenkins.io
-    chart: jenkins
-    targetRevision: 5.8.6
-    helm:
-      valueFiles:
-        - values.yaml
+
+  sources:
+    # 1) The Helm chart (from Helm repo)
+    - repoURL: https://charts.jenkins.io
+      chart: jenkins
+      targetRevision: 5.8.6
+      helm:
+        valueFiles:
+          - $values/platform/jenkins/values.yaml
+
+    # 2) Your Git repo (where values live)
+    - repoURL: https://github.com/sebrakoczy/GitOps/tree/main/platform/jenkins
+      targetRevision: main
+      ref: values
+
   syncPolicy:
     automated:
       prune: true
