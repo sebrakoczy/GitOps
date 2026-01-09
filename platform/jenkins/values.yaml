@@ -4,6 +4,12 @@ controller:
     storageClass: longhorn
     size: 20Gi
 
+  installPlugins:
+    - kubernetes
+    - workflow-aggregator
+    - git
+    - configuration-as-code
+
   runAsUser: 1000
   fsGroup: 1000
 
