@@ -9,7 +9,7 @@ controller:
     - git
     - configuration-as-code:1963.v24e046127a_3f
   JCasC:
-    defaultConfig: true
+    defaultConfig: false
     configScripts:
       kubernetes-cloud: |
         jenkins:
