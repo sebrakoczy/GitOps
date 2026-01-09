@@ -19,9 +19,15 @@ spec:
           storageMinimalAvailablePercentage: 15
           replicaAutoBalance: disabled
           defaultDataPath: /var/lib/longhorn
+        serviceAccount:
+          create: true
+          name: longhorn-service-account
+        preUpgradeChecker:
+          jobEnabled: false
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+
