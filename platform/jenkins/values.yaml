@@ -26,7 +26,7 @@ controller:
                   - name: "default"
                     namespace: "jenkins"
                     label: "k8s"
-                    idleMinutes: 1
+                    idleMinutes: 2
                     serviceAccount: "jenkins"
                     nodeUsageMode: "NORMAL"
                     nodeSelector:
