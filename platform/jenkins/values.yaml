@@ -26,9 +26,11 @@ controller:
                   - name: "default"
                     namespace: "jenkins"
                     label: "k8s"
-                    idleMinutes: 5
+                    idleMinutes: 1
                     serviceAccount: "jenkins"
                     nodeUsageMode: "NORMAL"
+                    nodeSelector:
+                      node-role: worker
                     containers:
                       - name: "jnlp"
                         image: "jenkins/inbound-agent:latest"
