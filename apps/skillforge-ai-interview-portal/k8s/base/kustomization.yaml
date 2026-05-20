@@ -1,0 +1,13 @@
+resources:
+  - namespace.yaml
+  - judge-networkpolicy.yaml
+  - api-rbac.yaml
+  - postgres-secret.yaml
+  - postgres-statefulset.yaml
+  - api-pvc.yaml
+  - api-configmap.yaml
+  - api-deployment.yaml
+  - api-service.yaml
+  - web-deployment.yaml
+  - web-service.yaml
+  - ingress.yaml

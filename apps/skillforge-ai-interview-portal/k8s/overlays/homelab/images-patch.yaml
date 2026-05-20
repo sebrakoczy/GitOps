@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skillforge-api
+  namespace: skillforge
+spec:
+  template:
+    spec:
+      containers:
+        - name: api
+          image: ghcr.io/YOUR_GITHUB_ORG/skillforge-api:0.2.0
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skillforge-web
+  namespace: skillforge
+spec:
+  template:
+    spec:
+      containers:
+        - name: web
+          image: ghcr.io/YOUR_GITHUB_ORG/skillforge-web:0.2.0
