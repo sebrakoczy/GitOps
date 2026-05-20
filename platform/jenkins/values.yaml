@@ -1,6 +1,9 @@
 controller:
   image:
+    registry: docker.io
+    repository: jenkins/jenkins
     tag: "2.555.2-jdk21"
+    pullPolicy: IfNotPresent
   installLatestPlugins: true
   persistence:
     enabled: true
