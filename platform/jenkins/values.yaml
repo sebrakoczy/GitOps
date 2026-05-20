@@ -1,4 +1,7 @@
 controller:
+  image:
+    tag: "2.555.2-jdk21"
+  installLatestPlugins: true
   persistence:
     enabled: true
     storageClass: longhorn
@@ -7,7 +10,7 @@ controller:
     - kubernetes
     - workflow-aggregator
     - git
-    - configuration-as-code:1963.v24e046127a_3f
+    - configuration-as-code
   JCasC:
     defaultConfig: false
     configScripts:
