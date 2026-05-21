@@ -1,5 +1,0 @@
-resources:
-  - ../../base
-  - web-nodeport.yaml
-patches:
-  - path: images-patch.yaml
