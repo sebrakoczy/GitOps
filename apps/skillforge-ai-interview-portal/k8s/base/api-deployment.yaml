@@ -60,10 +60,3 @@ spec:
             readOnlyRootFilesystem: false
             capabilities:
               drop: ["ALL"]
-          volumeMounts:
-            - name: data
-              mountPath: /data
-      volumes:
-        - name: data
-          persistentVolumeClaim:
-            claimName: skillforge-api-data

@@ -4,7 +4,6 @@ resources:
   - api-rbac.yaml
   - postgres-secret.yaml
   - postgres-statefulset.yaml
-  - api-pvc.yaml
   - api-configmap.yaml
   - api-deployment.yaml
   - api-service.yaml
