@@ -11,10 +11,10 @@ images:
     tag: "0.2.2"
   api:
     repository: ghcr.io/sebrakoczy/skillforge-api
-    tag: "0.2.2"
+    tag: "0.2.1"
   worker:
     repository: ghcr.io/sebrakoczy/skillforge-worker
-    tag: "0.2.2"
+    tag: "0.2.1"
 
 postgres:
   password: replace-with-external-secret-or-sealed-secret
