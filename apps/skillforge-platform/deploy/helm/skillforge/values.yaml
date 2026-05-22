@@ -8,15 +8,15 @@ imagePullSecrets: []
 images:
   web:
     repository: ghcr.io/YOUR_GITHUB_USER/skillforge-web
-    tag: "0.2.0"
+    tag: "0.2.2"
     pullPolicy: IfNotPresent
   api:
     repository: ghcr.io/YOUR_GITHUB_USER/skillforge-api
-    tag: "0.2.0"
+    tag: "0.2.2"
     pullPolicy: IfNotPresent
   worker:
     repository: ghcr.io/YOUR_GITHUB_USER/skillforge-worker
-    tag: "0.2.0"
+    tag: "0.2.2"
     pullPolicy: IfNotPresent
 
 service:
