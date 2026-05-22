@@ -177,3 +177,14 @@ Recommended next iterations:
 6. Add timed interview mode.
 7. Add AI mock interview mode.
 8. Add Stripe/subscription support if this becomes a SaaS product.
+
+## v0.2 highlights
+
+- 432 platform engineering interview questions across 24 domains.
+- 48 scenario labs for senior-level troubleshooting, design, and operational reasoning.
+- HackerRank-inspired clean light UI.
+- Repeatable content upsert on API startup, so redeploys add/refresh seeded content without deleting attempts.
+- Homelab NodePort defaults to `32081`.
+- Optional CiliumNetworkPolicy allows LAN access for Cilium default-deny clusters.
+
+Upgrade details are in `docs/V0.2_PRODUCT_UPGRADE.md`.

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 REGISTRY="${REGISTRY:-ghcr.io/sebrakoczy}"
-VERSION="${VERSION:-0.1.1}"
+VERSION="${VERSION:-0.2.0}"
 PLATFORM="${PLATFORM:-linux/amd64}"
 BUILDER="${BUILDER:-skillforge-builder}"
 

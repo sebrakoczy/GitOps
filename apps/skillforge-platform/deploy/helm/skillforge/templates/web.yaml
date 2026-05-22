@@ -6,6 +6,9 @@ metadata:
     {{- include "skillforge.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.web.type }}
+  {{- if and (eq .Values.service.web.type "NodePort") .Values.service.web.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ .Values.service.web.externalTrafficPolicy }}
+  {{- end }}
   ports:
     - name: http
       port: {{ .Values.service.web.port }}

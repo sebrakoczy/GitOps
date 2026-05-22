@@ -2,18 +2,19 @@ service:
   web:
     type: NodePort
     port: 8080
-    nodePort: 30080
+    nodePort: 32081
+    externalTrafficPolicy: Local
 
 images:
   web:
     repository: ghcr.io/sebrakoczy/skillforge-web
-    tag: "0.1.1"
+    tag: "0.2.0"
   api:
     repository: ghcr.io/sebrakoczy/skillforge-api
-    tag: "0.1.1"
+    tag: "0.2.0"
   worker:
     repository: ghcr.io/sebrakoczy/skillforge-worker
-    tag: "0.1.1"
+    tag: "0.2.0"
 
 postgres:
   password: replace-with-external-secret-or-sealed-secret
@@ -21,3 +22,9 @@ postgres:
 
 redis:
   storageClassName: longhorn
+
+
+ciliumPolicy:
+  enabled: true
+  allowedCIDRs:
+    - 192.168.1.0/24

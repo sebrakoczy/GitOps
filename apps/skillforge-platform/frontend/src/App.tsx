@@ -1,10 +1,27 @@
 import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import { Activity, BookOpen, CheckCircle2, Code2, Flame, Layers, Search, ShieldCheck, TerminalSquare, XCircle } from "lucide-react";
+import {
+  Activity,
+  BarChart3,
+  BookOpen,
+  CheckCircle2,
+  Code2,
+  Filter,
+  Layers,
+  ListChecks,
+  Search,
+  ShieldCheck,
+  Target,
+  TerminalSquare,
+  Trophy,
+  XCircle,
+} from "lucide-react";
 import { api } from "./api";
 import type { Attempt, Category, Challenge, Dashboard, Question, Submission } from "./types";
 
 type Mode = "questions" | "challenges";
+
+const DIFFICULTIES = ["", "Beginner", "Intermediate", "Advanced"];
 
 function badgeClass(difficulty: string) {
   return `badge ${difficulty.toLowerCase()}`;
@@ -24,6 +41,7 @@ export function App() {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [mode, setMode] = useState<Mode>("questions");
   const [category, setCategory] = useState<string>("");
+  const [difficulty, setDifficulty] = useState<string>("");
   const [query, setQuery] = useState("");
   const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null);
   const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(null);
@@ -39,18 +57,19 @@ export function App() {
       const [d, c, q, ch] = await Promise.all([
         api.dashboard(),
         api.categories(),
-        api.questions(category || undefined, query || undefined),
-        api.challenges(category || undefined, query || undefined),
+        api.questions(category || undefined, query || undefined, difficulty || undefined),
+        api.challenges(category || undefined, query || undefined, difficulty || undefined),
       ]);
       setDashboard(d);
       setCategories(c);
       setQuestions(q);
       setChallenges(ch);
-      if (!selectedQuestion && q.length > 0) setSelectedQuestion(q[0]);
-      if (!selectedChallenge && ch.length > 0) {
-        setSelectedChallenge(ch[0]);
-        setSolution(starterText(ch[0]));
-      }
+      setSelectedQuestion(q[0] ?? null);
+      setSelectedChallenge(ch[0] ?? null);
+      setAnswer(q[0]?.type === "multi_select" ? [] : "");
+      setSolution(ch[0] ? starterText(ch[0]) : "");
+      setAttempt(null);
+      setSubmission(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     }
@@ -59,9 +78,10 @@ export function App() {
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [category, query]);
+  }, [category, difficulty, query]);
 
   const activeItems = useMemo(() => (mode === "questions" ? questions : challenges), [mode, questions, challenges]);
+  const selectedCategoryName = categories.find((item) => item.slug === category)?.name ?? "All domains";
 
   async function submitAnswer() {
     if (!selectedQuestion) return;
@@ -92,20 +112,41 @@ export function App() {
     setSubmission(null);
   }
 
+  function resetFilters() {
+    setCategory("");
+    setDifficulty("");
+    setQuery("");
+  }
+
   return (
     <main>
+      <nav className="topbar">
+        <div className="brand">
+          <div className="brand-mark"><TerminalSquare size={22} /></div>
+          <div>
+            <strong>SkillForge</strong>
+            <span>Platform Engineering Interview OS</span>
+          </div>
+        </div>
+        <div className="top-actions">
+          <span className="pill"><ShieldCheck size={15} /> Kubernetes-native</span>
+          <span className="pill"><Trophy size={15} /> Senior-track</span>
+        </div>
+      </nav>
+
       <section className="hero">
-        <div>
-          <div className="eyebrow"><ShieldCheck size={18} /> Kubernetes-native interview training</div>
-          <h1>SkillForge Platform</h1>
+        <div className="hero-copy">
+          <div className="eyebrow"><Target size={18} /> Comprehensive platform engineering preparation</div>
+          <h1>Practice like the interview is production.</h1>
           <p>
-            HackerRank-style prep for Senior Platform Engineer interviews: Kubernetes, Linux, Bash, Terraform,
-            Ansible, GitOps, SRE, cloud networking, and system design.
+            A clean HackerRank-style workspace for Kubernetes, Linux, Bash, Terraform, Ansible, GitOps,
+            DevSecOps, SRE, cloud networking, systems design, troubleshooting, and leadership scenarios.
           </p>
         </div>
-        <div className="hero-card">
+        <div className="readiness-card">
           <span>Readiness score</span>
           <strong>{dashboard?.readiness_score ?? 0}%</strong>
+          <div className="scorebar"><i style={{ width: `${Math.min(dashboard?.readiness_score ?? 0, 100)}%` }} /></div>
           <small>{dashboard?.attempts ?? 0} question attempts · {dashboard?.submissions ?? 0} lab submissions</small>
         </div>
       </section>
@@ -113,10 +154,10 @@ export function App() {
       {error && <div className="error">{error}</div>}
 
       <section className="metrics">
-        <Metric icon={<BookOpen />} label="Questions" value={dashboard?.total_questions ?? 0} />
-        <Metric icon={<Code2 />} label="Labs" value={dashboard?.total_challenges ?? 0} />
+        <Metric icon={<BookOpen />} label="Interview questions" value={dashboard?.total_questions ?? 0} />
+        <Metric icon={<Code2 />} label="Scenario labs" value={dashboard?.total_challenges ?? 0} />
         <Metric icon={<Activity />} label="Average score" value={`${dashboard?.average_score ?? 0}%`} />
-        <Metric icon={<Flame />} label="Domains" value={dashboard?.domain_breakdown.length ?? 0} />
+        <Metric icon={<Layers />} label="Domains" value={dashboard?.domain_breakdown.length ?? 0} />
       </section>
 
       <section className="workspace">
@@ -130,9 +171,10 @@ export function App() {
             </button>
           </div>
 
+          <div className="filter-title"><Filter size={15} /> Filters</div>
           <label className="search">
             <Search size={16} />
-            <input placeholder="Search topics..." value={query} onChange={(e) => setQuery(e.target.value)} />
+            <input placeholder="Search Kubernetes, Terraform, SRE..." value={query} onChange={(e) => setQuery(e.target.value)} />
           </label>
 
           <select value={category} onChange={(e) => setCategory(e.target.value)}>
@@ -141,6 +183,17 @@ export function App() {
               <option key={cat.slug} value={cat.slug}>{cat.name}</option>
             ))}
           </select>
+
+          <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
+            {DIFFICULTIES.map((item) => <option key={item || "all"} value={item}>{item || "All difficulties"}</option>)}
+          </select>
+
+          <button className="ghost" onClick={resetFilters}>Reset filters</button>
+
+          <div className="list-summary">
+            <strong>{activeItems.length}</strong>
+            <span>{mode === "questions" ? "questions" : "labs"} · {selectedCategoryName}</span>
+          </div>
 
           <div className="item-list">
             {mode === "questions" && questions.map((q) => (
@@ -184,7 +237,13 @@ export function App() {
       </section>
 
       <section className="domain-grid">
-        <h2>Domain coverage</h2>
+        <div className="section-heading">
+          <div>
+            <h2>Domain coverage</h2>
+            <p>Designed around senior platform engineering interviews, not generic trivia.</p>
+          </div>
+          <BarChart3 />
+        </div>
         <div className="cards">
           {dashboard?.domain_breakdown.map((domain) => (
             <div className="domain" key={domain.slug}>
@@ -220,8 +279,9 @@ function QuestionPanel({ question, answer, setAnswer, submit, attempt }: {
           <span className={badgeClass(question.difficulty)}>{question.difficulty}</span>
           <h2>{question.title}</h2>
           <p>{question.prompt}</p>
+          {question.tags?.length ? <div className="tags">{question.tags.slice(0, 5).map((tag) => <span key={tag}>{tag}</span>)}</div> : null}
         </div>
-        <Layers />
+        <ListChecks />
       </div>
 
       {question.choices?.length ? (
@@ -249,7 +309,7 @@ function QuestionPanel({ question, answer, setAnswer, submit, attempt }: {
           })}
         </div>
       ) : (
-        <textarea className="answer" value={String(answer)} onChange={(e) => setAnswer(e.target.value)} placeholder="Write your answer..." />
+        <textarea className="answer" value={String(answer)} onChange={(e) => setAnswer(e.target.value)} placeholder="Write a structured interview answer. Mention commands, tradeoffs, failure modes, rollback, and validation where relevant." />
       )}
 
       <button className="primary" onClick={submit}>Submit answer</button>
@@ -272,6 +332,7 @@ function ChallengePanel({ challenge, solution, setSolution, submit, submission }
           <span className={badgeClass(challenge.difficulty)}>{challenge.difficulty}</span>
           <h2>{challenge.title}</h2>
           <p>{challenge.prompt}</p>
+          {challenge.tags?.length ? <div className="tags">{challenge.tags.slice(0, 5).map((tag) => <span key={tag}>{tag}</span>)}</div> : null}
         </div>
         <Code2 />
       </div>

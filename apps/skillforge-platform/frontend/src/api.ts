@@ -14,21 +14,22 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return res.json() as Promise<T>;
 }
 
+function itemParams(category?: string, q?: string, difficulty?: string) {
+  const params = new URLSearchParams();
+  if (category) params.set("category", category);
+  if (q) params.set("q", q);
+  if (difficulty) params.set("difficulty", difficulty);
+  params.set("limit", "1000");
+  return params.toString();
+}
+
 export const api = {
   dashboard: () => request<Dashboard>("/dashboard"),
   categories: () => request<Category[]>("/categories"),
-  questions: (category?: string, q?: string) => {
-    const params = new URLSearchParams();
-    if (category) params.set("category", category);
-    if (q) params.set("q", q);
-    return request<Question[]>(`/questions?${params.toString()}`);
-  },
-  challenges: (category?: string, q?: string) => {
-    const params = new URLSearchParams();
-    if (category) params.set("category", category);
-    if (q) params.set("q", q);
-    return request<Challenge[]>(`/challenges?${params.toString()}`);
-  },
+  questions: (category?: string, q?: string, difficulty?: string) =>
+    request<Question[]>(`/questions?${itemParams(category, q, difficulty)}`),
+  challenges: (category?: string, q?: string, difficulty?: string) =>
+    request<Challenge[]>(`/challenges?${itemParams(category, q, difficulty)}`),
   submitAttempt: (question_id: number, answer: unknown) =>
     request<Attempt>("/attempts", { method: "POST", body: JSON.stringify({ question_id, answer }) }),
   submitChallenge: (challenge_id: number, solution: string) =>

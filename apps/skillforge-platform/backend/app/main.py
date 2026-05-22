@@ -8,7 +8,7 @@ from .models import Attempt, Category, Challenge, Question, Submission
 from .schemas import AttemptIn, AttemptOut, CategoryOut, ChallengeOut, DashboardOut, QuestionOut, SubmissionIn, SubmissionOut
 from .seed import seed_database
 
-app = FastAPI(title="SkillForge Platform API", version="0.1.0")
+app = FastAPI(title="SkillForge Platform API", version="0.2.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -37,7 +37,7 @@ def questions(
     category: str | None = Query(default=None),
     difficulty: str | None = Query(default=None),
     q: str | None = Query(default=None),
-    limit: int = Query(default=100, le=250),
+    limit: int = Query(default=1000, le=1000),
     db: Session = Depends(get_db),
 ):
     query = db.query(Question).options(joinedload(Question.category)).join(Category)
@@ -74,7 +74,7 @@ def challenges(
     category: str | None = Query(default=None),
     difficulty: str | None = Query(default=None),
     q: str | None = Query(default=None),
-    limit: int = Query(default=100, le=250),
+    limit: int = Query(default=1000, le=1000),
     db: Session = Depends(get_db),
 ):
     query = db.query(Challenge).options(joinedload(Challenge.category)).join(Category)

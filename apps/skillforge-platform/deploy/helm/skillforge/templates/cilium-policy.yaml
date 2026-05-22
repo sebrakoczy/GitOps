@@ -1,0 +1,20 @@
+{{- if .Values.ciliumPolicy.enabled }}
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-lan-to-skillforge-web
+  labels:
+    {{- include "skillforge.labels" . | nindent 4 }}
+spec:
+  endpointSelector:
+    matchLabels:
+      {{- include "skillforge.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: web
+  ingress:
+    - fromCIDR:
+        {{- toYaml .Values.ciliumPolicy.allowedCIDRs | nindent 8 }}
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+{{- end }}

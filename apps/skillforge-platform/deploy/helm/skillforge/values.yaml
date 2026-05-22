@@ -8,15 +8,15 @@ imagePullSecrets: []
 images:
   web:
     repository: ghcr.io/YOUR_GITHUB_USER/skillforge-web
-    tag: "0.1.1"
+    tag: "0.2.0"
     pullPolicy: IfNotPresent
   api:
     repository: ghcr.io/YOUR_GITHUB_USER/skillforge-api
-    tag: "0.1.1"
+    tag: "0.2.0"
     pullPolicy: IfNotPresent
   worker:
     repository: ghcr.io/YOUR_GITHUB_USER/skillforge-worker
-    tag: "0.1.1"
+    tag: "0.2.0"
     pullPolicy: IfNotPresent
 
 service:
@@ -24,6 +24,7 @@ service:
     type: ClusterIP
     port: 8080
     nodePort: null
+    externalTrafficPolicy: null
   api:
     port: 8000
 
@@ -97,3 +98,9 @@ graders:
   createKubernetesJobs: false
   jobNamespace: skillforge
   jobImage: alpine:3.20
+
+
+ciliumPolicy:
+  enabled: false
+  allowedCIDRs:
+    - 192.168.1.0/24
