@@ -1,0 +1,23 @@
+service:
+  web:
+    type: NodePort
+    port: 8080
+    nodePort: 30080
+
+images:
+  web:
+    repository: ghcr.io/sebrakoczy/skillforge-web
+    tag: "0.1.1"
+  api:
+    repository: ghcr.io/sebrakoczy/skillforge-api
+    tag: "0.1.1"
+  worker:
+    repository: ghcr.io/sebrakoczy/skillforge-worker
+    tag: "0.1.1"
+
+postgres:
+  password: replace-with-external-secret-or-sealed-secret
+  storageClassName: longhorn
+
+redis:
+  storageClassName: longhorn

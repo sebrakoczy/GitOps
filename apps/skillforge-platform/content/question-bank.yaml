@@ -1,0 +1,869 @@
+categories:
+  - slug: kubernetes-core
+    name: Kubernetes Core
+    description: Workloads, services, scheduling, config, storage, and cluster primitives.
+  - slug: kubernetes-troubleshooting
+    name: Kubernetes Troubleshooting
+    description: Debugging pods, networking, scheduling, storage, ingress, and control-plane symptoms.
+  - slug: kubernetes-security
+    name: Kubernetes Security
+    description: RBAC, pod hardening, admission, network policy, image security, and runtime controls.
+  - slug: linux
+    name: Linux Systems
+    description: Processes, filesystems, systemd, logs, users, networking, disks, and performance triage.
+  - slug: bash
+    name: Bash Automation
+    description: Shell scripting, text processing, idempotency, error handling, and log parsing.
+  - slug: terraform
+    name: Terraform / IaC
+    description: Providers, modules, state, backends, validation, drift, imports, and secure cloud design.
+  - slug: ansible
+    name: Ansible
+    description: Inventories, playbooks, roles, variables, templates, handlers, facts, and idempotent automation.
+  - slug: gitops-cicd
+    name: GitOps / CI/CD
+    description: Argo CD, Helm, pipelines, promotion, release safety, and immutable delivery.
+  - slug: observability-sre
+    name: Observability / SRE
+    description: Metrics, logs, traces, SLOs, alerting, incident response, capacity, and reliability.
+  - slug: platform-engineering
+    name: Platform Engineering
+    description: Internal developer platforms, golden paths, self-service, multi-cloud, and developer experience.
+  - slug: cloud-networking
+    name: Cloud / Networking
+    description: VPCs, DNS, load balancers, TLS, routing, firewalls, private endpoints, and hybrid connectivity.
+  - slug: system-design
+    name: System Design
+    description: Architecture tradeoffs, scaling, reliability, security, cost, and platform design interviews.
+
+questions:
+  - slug: k8s-core-deployment-rollout
+    title: Deployment rollout safety
+    category: kubernetes-core
+    difficulty: Intermediate
+    type: multiple_choice
+    prompt: Which Kubernetes object is normally used to declaratively manage rolling updates and rollbacks for stateless pods?
+    choices: [Pod, Deployment, Endpoints, PersistentVolume]
+    correct_answer: Deployment
+    explanation: A Deployment manages ReplicaSets and supports declarative rollout and rollback behavior for stateless workloads.
+    tags: [deployment, rollout]
+  - slug: k8s-core-service-types
+    title: Service type selection
+    category: kubernetes-core
+    difficulty: Beginner
+    type: multiple_choice
+    prompt: Which Service type exposes an application on a stable port on every node in the cluster?
+    choices: [ClusterIP, NodePort, ExternalName, Headless]
+    correct_answer: NodePort
+    explanation: NodePort allocates a port on each node and forwards traffic to the Service backends.
+    tags: [service, networking]
+  - slug: k8s-core-config-secret
+    title: ConfigMap versus Secret
+    category: kubernetes-core
+    difficulty: Beginner
+    type: short_answer
+    prompt: Explain when you would use a ConfigMap versus a Secret.
+    correct_answer:
+      keywords: [configuration, sensitive, secret, environment, mounted]
+    explanation: ConfigMaps hold non-sensitive configuration; Secrets hold sensitive values and should still be protected with RBAC, encryption at rest, and external secret management where possible.
+    tags: [configmap, secret]
+  - slug: k8s-core-statefulset
+    title: Stateful workload identity
+    category: kubernetes-core
+    difficulty: Intermediate
+    type: multiple_choice
+    prompt: Which workload controller provides stable network identity and stable persistent storage for each replica?
+    choices: [Deployment, StatefulSet, Job, ReplicaSet]
+    correct_answer: StatefulSet
+    explanation: StatefulSets are designed for workloads that require stable identity, ordered operations, and stable PVC association.
+    tags: [statefulset, storage]
+  - slug: k8s-core-probes
+    title: Probe purpose
+    category: kubernetes-core
+    difficulty: Intermediate
+    type: multi_select
+    prompt: Which probes can Kubernetes use to check container health or startup state?
+    choices: [readinessProbe, livenessProbe, startupProbe, dnsProbe]
+    correct_answer: [readinessProbe, livenessProbe, startupProbe]
+    explanation: Kubernetes supports readiness, liveness, and startup probes. There is no native dnsProbe field.
+    tags: [probes]
+
+  - slug: k8s-trouble-crashloop
+    title: CrashLoopBackOff triage
+    category: kubernetes-troubleshooting
+    difficulty: Intermediate
+    type: short_answer
+    prompt: Name the first commands you would run when a pod is in CrashLoopBackOff.
+    correct_answer:
+      keywords: [kubectl describe pod, kubectl logs, previous, events, restart]
+    explanation: Start with describe/events and current/previous logs, then inspect probes, env vars, image command, secrets, config, resource limits, and dependencies.
+    tags: [crashloop, logs]
+  - slug: k8s-trouble-pending-pod
+    title: Pending pod root causes
+    category: kubernetes-troubleshooting
+    difficulty: Intermediate
+    type: multi_select
+    prompt: Which issues commonly cause a pod to remain Pending?
+    choices: [Insufficient CPU or memory, Unbound PVC, Node affinity mismatch, Working readiness probe]
+    correct_answer: [Insufficient CPU or memory, Unbound PVC, Node affinity mismatch]
+    explanation: Pending usually means the scheduler cannot place the pod or required storage is not bound.
+    tags: [scheduling, pvc]
+  - slug: k8s-trouble-service-no-endpoints
+    title: Service has no endpoints
+    category: kubernetes-troubleshooting
+    difficulty: Intermediate
+    type: short_answer
+    prompt: A Service has no endpoints. What would you check?
+    correct_answer:
+      keywords: [selector, labels, pod, readiness, namespace]
+    explanation: Check Service selectors, Pod labels, namespace, pod readiness, and whether EndpointSlice objects are being created.
+    tags: [service, endpoints]
+  - slug: k8s-trouble-imagepull
+    title: ImagePullBackOff causes
+    category: kubernetes-troubleshooting
+    difficulty: Beginner
+    type: multi_select
+    prompt: Which problems can cause ImagePullBackOff?
+    choices: [Wrong image tag, Registry auth failure, Network/DNS failure, Too many replicas]
+    correct_answer: [Wrong image tag, Registry auth failure, Network/DNS failure]
+    explanation: ImagePullBackOff indicates repeated failures pulling the image, commonly due to name/tag, authentication, DNS, registry, or network issues.
+    tags: [image, registry]
+  - slug: k8s-trouble-pvc
+    title: PVC stuck Pending
+    category: kubernetes-troubleshooting
+    difficulty: Intermediate
+    type: short_answer
+    prompt: A PVC is stuck Pending. What cluster objects and events should you inspect?
+    correct_answer:
+      keywords: [storageclass, provisioner, events, persistentvolume, accessmode]
+    explanation: Inspect PVC events, StorageClass, CSI provisioner health, PV availability, access modes, volume binding mode, and node topology.
+    tags: [storage, pvc]
+
+  - slug: k8s-sec-rbac
+    title: RBAC least privilege
+    category: kubernetes-security
+    difficulty: Intermediate
+    type: multiple_choice
+    prompt: Which RBAC object grants permissions within a single namespace?
+    choices: [ClusterRoleBinding, Role, NamespacePolicy, SecurityContext]
+    correct_answer: Role
+    explanation: A Role is namespace-scoped. ClusterRole is cluster-scoped or can be reused with RoleBinding in a namespace.
+    tags: [rbac]
+  - slug: k8s-sec-pod-context
+    title: Hardened pod security context
+    category: kubernetes-security
+    difficulty: Intermediate
+    type: multi_select
+    prompt: Which settings are usually part of a hardened container security context?
+    choices: [runAsNonRoot, allowPrivilegeEscalation false, privileged true, readOnlyRootFilesystem]
+    correct_answer: [runAsNonRoot, allowPrivilegeEscalation false, readOnlyRootFilesystem]
+    explanation: Avoid privileged containers unless there is a strong, controlled reason. Use non-root, no privilege escalation, read-only root FS, dropped capabilities, and seccomp.
+    tags: [securitycontext]
+  - slug: k8s-sec-networkpolicy
+    title: NetworkPolicy behavior
+    category: kubernetes-security
+    difficulty: Advanced
+    type: short_answer
+    prompt: What happens to a pod once it is selected by an ingress NetworkPolicy?
+    correct_answer:
+      keywords: [default deny, selected, allowed, ingress, policy]
+    explanation: Once a pod is selected by an ingress NetworkPolicy, ingress traffic is denied except traffic explicitly allowed by applicable policies.
+    tags: [networkpolicy]
+  - slug: k8s-sec-secrets
+    title: Secret management in GitOps
+    category: kubernetes-security
+    difficulty: Intermediate
+    type: multiple_choice
+    prompt: What is the safest default approach for Kubernetes Secrets in GitOps?
+    choices: [Commit plaintext Secrets, Use External Secrets or sealed/encrypted secret workflow, Put passwords in ConfigMaps, Store all secrets in container images]
+    correct_answer: Use External Secrets or sealed/encrypted secret workflow
+    explanation: Do not commit plaintext secrets. Prefer external secret stores or encrypted secret workflows with tight RBAC and auditability.
+    tags: [secrets, gitops]
+  - slug: k8s-sec-admission
+    title: Admission control purpose
+    category: kubernetes-security
+    difficulty: Advanced
+    type: short_answer
+    prompt: Why are admission policies useful in Kubernetes platform engineering?
+    correct_answer:
+      keywords: [enforce, policy, validate, mutate, guardrails]
+    explanation: Admission controls enforce guardrails at API admission time, such as requiring labels, blocking privileged pods, validating images, or mutating defaults.
+    tags: [admission, policy]
+
+  - slug: linux-systemd-service
+    title: systemd unit debugging
+    category: linux
+    difficulty: Intermediate
+    type: short_answer
+    prompt: Which commands help debug a failing systemd service?
+    correct_answer:
+      keywords: [systemctl status, journalctl, unit, logs, restart]
+    explanation: Use systemctl status, journalctl -u, systemctl cat, systemctl show, and inspect dependencies, permissions, environment, and exit codes.
+    tags: [systemd]
+  - slug: linux-files-permissions
+    title: Permission model
+    category: linux
+    difficulty: Beginner
+    type: multiple_choice
+    prompt: What does chmod 640 file.txt allow?
+    choices: [Owner read/write, group read, others none, Owner execute only, Everyone read/write, Group write/execute]
+    correct_answer: Owner read/write, group read, others none
+    explanation: 6 means read/write for owner, 4 means read for group, 0 means no permissions for others.
+    tags: [permissions]
+  - slug: linux-network-triage
+    title: Linux network triage
+    category: linux
+    difficulty: Intermediate
+    type: short_answer
+    prompt: Name commands you would use to troubleshoot a Linux host that cannot reach a service by DNS name.
+    correct_answer:
+      keywords: [dig, resolv.conf, ping, curl, ss, ip route]
+    explanation: Check DNS resolution, routes, sockets, firewall, service reachability, and logs with tools like dig, resolvectl, ip route, ss, curl, and tcpdump.
+    tags: [networking]
+  - slug: linux-disk-full
+    title: Disk full investigation
+    category: linux
+    difficulty: Intermediate
+    type: short_answer
+    prompt: What would you check first when /var is full on a Linux server?
+    correct_answer:
+      keywords: [df, du, journalctl, logs, inode]
+    explanation: Check filesystem usage, large directories, journal/log growth, rotated logs, container layers, and inode exhaustion.
+    tags: [disk]
+  - slug: linux-processes
+    title: Process signals
+    category: linux
+    difficulty: Beginner
+    type: multiple_choice
+    prompt: Which signal requests a graceful process termination by default?
+    choices: [SIGTERM, SIGKILL, SIGSTOP, SIGCHLD]
+    correct_answer: SIGTERM
+    explanation: SIGTERM asks a process to terminate and can be handled. SIGKILL cannot be trapped or ignored.
+    tags: [processes]
+
+  - slug: bash-errexit
+    title: Safer Bash defaults
+    category: bash
+    difficulty: Intermediate
+    type: multiple_choice
+    prompt: Which Bash line is commonly used to fail fast on errors, unset variables, and failed pipeline commands?
+    choices: [set -euo pipefail, set +x, trap EXIT, shopt -s globstar]
+    correct_answer: set -euo pipefail
+    explanation: set -euo pipefail is a common baseline for safer scripts, but still requires thoughtful error handling.
+    tags: [bash, safety]
+  - slug: bash-quote-vars
+    title: Quoting variables
+    category: bash
+    difficulty: Beginner
+    type: short_answer
+    prompt: Why should Bash variables usually be quoted as "$var"?
+    correct_answer:
+      keywords: [word splitting, globbing, spaces, safe]
+    explanation: Quoting prevents accidental word splitting and pathname expansion, especially when values contain spaces or special characters.
+    tags: [quoting]
+  - slug: bash-jq
+    title: JSON parsing
+    category: bash
+    difficulty: Beginner
+    type: multiple_choice
+    prompt: Which tool is commonly used to parse JSON safely in shell scripts?
+    choices: [jq, sed only, cut only, tar]
+    correct_answer: jq
+    explanation: jq is purpose-built for JSON parsing and transformation.
+    tags: [jq]
+  - slug: bash-idempotency
+    title: Idempotent scripts
+    category: bash
+    difficulty: Intermediate
+    type: short_answer
+    prompt: What does it mean for an automation script to be idempotent?
+    correct_answer:
+      keywords: [same result, repeated, safe, desired state]
+    explanation: An idempotent script can run repeatedly and converge on the same desired state without causing unintended duplicate changes.
+    tags: [automation]
+  - slug: bash-trap
+    title: Cleanup on exit
+    category: bash
+    difficulty: Intermediate
+    type: multiple_choice
+    prompt: Which Bash feature is commonly used to run cleanup logic when a script exits?
+    choices: [trap, alias, export, readarray]
+    correct_answer: trap
+    explanation: trap can register cleanup handlers for EXIT and signals.
+    tags: [trap]
+
+  - slug: tf-state
+    title: Terraform state purpose
+    category: terraform
+    difficulty: Beginner
+    type: short_answer
+    prompt: Why does Terraform keep state?
+    correct_answer:
+      keywords: [map, real infrastructure, resources, plan, drift]
+    explanation: Terraform state maps configuration to real infrastructure and helps compute plans, detect drift, and manage resource dependencies.
+    tags: [state]
+  - slug: tf-backend-locking
+    title: Remote state locking
+    category: terraform
+    difficulty: Intermediate
+    type: multiple_choice
+    prompt: Why use a remote backend with state locking for team Terraform work?
+    choices: [Prevent concurrent state writes, Make resources free, Avoid writing modules, Disable providers]
+    correct_answer: Prevent concurrent state writes
+    explanation: Remote state with locking prevents multiple users or pipelines from corrupting state through concurrent operations.
+    tags: [backend, locking]
+  - slug: tf-module
+    title: Module design
+    category: terraform
+    difficulty: Intermediate
+    type: short_answer
+    prompt: Name qualities of a good reusable Terraform module.
+    correct_answer:
+      keywords: [inputs, outputs, versioned, documented, validated]
+    explanation: Good modules expose clear inputs/outputs, validate assumptions, avoid hard-coded environment details, are versioned, documented, and tested.
+    tags: [modules]
+  - slug: tf-import
+    title: Terraform import
+    category: terraform
+    difficulty: Intermediate
+    type: multiple_choice
+    prompt: What does terraform import do?
+    choices: [Associates existing infrastructure with Terraform state, Deletes unmanaged cloud resources, Formats HCL, Creates a provider plugin]
+    correct_answer: Associates existing infrastructure with Terraform state
+    explanation: Import links existing infrastructure to a Terraform resource address in state; you still need matching configuration.
+    tags: [import]
+  - slug: tf-sensitive
+    title: Sensitive values
+    category: terraform
+    difficulty: Intermediate
+    type: short_answer
+    prompt: Does marking a Terraform variable sensitive fully protect it? Explain briefly.
+    correct_answer:
+      keywords: [state, output, redacts, protect, backend]
+    explanation: sensitive helps redact CLI output, but secrets may still exist in state. Protect state storage, use secret managers, and avoid secrets in Terraform when possible.
+    tags: [security]
+
+  - slug: ansible-idempotent
+    title: Ansible idempotency
+    category: ansible
+    difficulty: Beginner
+    type: multiple_choice
+    prompt: What should an idempotent Ansible task do when the target already matches the desired state?
+    choices: [Report ok/no change, Always restart the server, Always rewrite the file, Fail immediately]
+    correct_answer: Report ok/no change
+    explanation: Idempotent tasks converge to desired state and avoid unnecessary changes on repeated runs.
+    tags: [idempotency]
+  - slug: ansible-handlers
+    title: Handler usage
+    category: ansible
+    difficulty: Intermediate
+    type: short_answer
+    prompt: When should you use an Ansible handler?
+    correct_answer:
+      keywords: [notify, changed, restart, service]
+    explanation: Handlers run when notified by changed tasks, commonly to restart/reload services only when config changes.
+    tags: [handlers]
+  - slug: ansible-inventory
+    title: Inventory purpose
+    category: ansible
+    difficulty: Beginner
+    type: multiple_choice
+    prompt: What does an Ansible inventory define?
+    choices: [Managed hosts and groups, Kubernetes pods only, Terraform state files, Docker image layers]
+    correct_answer: Managed hosts and groups
+    explanation: Inventory defines the managed nodes, groups, and host/group variables used by playbooks.
+    tags: [inventory]
+  - slug: ansible-vault
+    title: Secret handling
+    category: ansible
+    difficulty: Intermediate
+    type: multiple_choice
+    prompt: Which Ansible feature can encrypt sensitive variables or files?
+    choices: [Ansible Vault, Ansible Galaxy, ansible-doc, setup module]
+    correct_answer: Ansible Vault
+    explanation: Ansible Vault encrypts sensitive content for use in playbooks and roles.
+    tags: [vault]
+  - slug: ansible-template
+    title: Templates
+    category: ansible
+    difficulty: Intermediate
+    type: short_answer
+    prompt: Why would you use the template module instead of copy?
+    correct_answer:
+      keywords: [jinja2, variables, render, dynamic]
+    explanation: template renders Jinja2 templates with variables, making it useful for dynamic config files.
+    tags: [template]
+
+  - slug: gitops-source-of-truth
+    title: GitOps source of truth
+    category: gitops-cicd
+    difficulty: Beginner
+    type: multiple_choice
+    prompt: In GitOps, what should be the source of truth for desired application state?
+    choices: [Git repository, Someone's laptop, Running pod spec only, kubectl edit history]
+    correct_answer: Git repository
+    explanation: Git stores desired state; the GitOps controller reconciles the cluster toward that state.
+    tags: [gitops]
+  - slug: gitops-argocd-sync
+    title: Argo CD reconciliation
+    category: gitops-cicd
+    difficulty: Intermediate
+    type: short_answer
+    prompt: What does it mean when an Argo CD application is OutOfSync?
+    correct_answer:
+      keywords: [desired, live, drift, git, cluster]
+    explanation: OutOfSync means the live cluster state differs from the desired state rendered from Git/Helm/Kustomize.
+    tags: [argocd]
+  - slug: cicd-immutable-tags
+    title: Immutable image promotion
+    category: gitops-cicd
+    difficulty: Intermediate
+    type: multiple_choice
+    prompt: Which image tag strategy is safer for production GitOps deployments?
+    choices: [Immutable digest or unique version tag, latest everywhere, manually edited pod image, random local tag]
+    correct_answer: Immutable digest or unique version tag
+    explanation: Immutable digests or unique tags make deployments reproducible and reduce surprise changes.
+    tags: [images]
+  - slug: cicd-security-gates
+    title: Pipeline security gates
+    category: gitops-cicd
+    difficulty: Intermediate
+    type: multi_select
+    prompt: Which checks are good CI/CD security gates?
+    choices: [SAST, dependency scanning, secret scanning, skipping tests in prod]
+    correct_answer: [SAST, dependency scanning, secret scanning]
+    explanation: Security gates can catch vulnerabilities and leaked secrets before deployment.
+    tags: [security]
+  - slug: cicd-rollback
+    title: Rollback strategy
+    category: gitops-cicd
+    difficulty: Intermediate
+    type: short_answer
+    prompt: In a GitOps deployment, how should you perform a controlled rollback?
+    correct_answer:
+      keywords: [git, revert, previous, image, sync]
+    explanation: Revert or promote a known-good desired state in Git, then let the controller reconcile. Emergency kubectl actions should be followed by Git correction.
+    tags: [rollback]
+
+  - slug: sre-slo
+    title: SLO definition
+    category: observability-sre
+    difficulty: Intermediate
+    type: short_answer
+    prompt: What is an SLO and why is it useful?
+    correct_answer:
+      keywords: [service level objective, reliability, target, error budget]
+    explanation: An SLO is a reliability target for a service. It enables error budgets and helps balance reliability work with feature delivery.
+    tags: [slo]
+  - slug: sre-alert-quality
+    title: Actionable alerts
+    category: observability-sre
+    difficulty: Intermediate
+    type: multiple_choice
+    prompt: What is the best alerting principle?
+    choices: [Alert only on actionable symptoms, Alert on every log line, Alert on all CPU spikes, Alert only once a month]
+    correct_answer: Alert only on actionable symptoms
+    explanation: Good alerts should be actionable, symptom-oriented, and tied to user or service impact where possible.
+    tags: [alerting]
+  - slug: obs-golden-signals
+    title: Golden signals
+    category: observability-sre
+    difficulty: Beginner
+    type: multi_select
+    prompt: Which are commonly considered golden signals for service monitoring?
+    choices: [Latency, Traffic, Errors, Saturation, Wallpaper color]
+    correct_answer: [Latency, Traffic, Errors, Saturation]
+    explanation: Latency, traffic, errors, and saturation are the classic four golden signals.
+    tags: [metrics]
+  - slug: obs-tracing
+    title: Distributed tracing
+    category: observability-sre
+    difficulty: Intermediate
+    type: short_answer
+    prompt: When does distributed tracing become especially valuable?
+    correct_answer:
+      keywords: [microservices, request, latency, dependency, path]
+    explanation: Tracing helps follow a request across services to identify latency, errors, and dependency bottlenecks.
+    tags: [tracing]
+  - slug: sre-incident-review
+    title: Blameless postmortem
+    category: observability-sre
+    difficulty: Intermediate
+    type: multiple_choice
+    prompt: What is the goal of a blameless postmortem?
+    choices: [Learn and improve systems, Identify a person to punish, Hide the incident, Avoid action items]
+    correct_answer: Learn and improve systems
+    explanation: Blameless postmortems focus on systemic learning and concrete preventive improvements.
+    tags: [incident]
+
+  - slug: platform-golden-path
+    title: Golden path
+    category: platform-engineering
+    difficulty: Intermediate
+    type: short_answer
+    prompt: What is a golden path in platform engineering?
+    correct_answer:
+      keywords: [recommended, paved, self-service, secure, developer]
+    explanation: A golden path is a recommended, supported way for developers to build, deploy, and operate services safely and efficiently.
+    tags: [platform]
+  - slug: platform-self-service
+    title: Self-service platform goal
+    category: platform-engineering
+    difficulty: Intermediate
+    type: multiple_choice
+    prompt: What is the main goal of a self-service internal developer platform?
+    choices: [Reduce cognitive load while enforcing standards, Let everyone bypass security, Replace all engineers, Avoid documentation]
+    correct_answer: Reduce cognitive load while enforcing standards
+    explanation: Platforms should make the right thing easy by offering reusable workflows, templates, guardrails, and visibility.
+    tags: [developer-experience]
+  - slug: platform-guardrails
+    title: Guardrails versus gates
+    category: platform-engineering
+    difficulty: Advanced
+    type: short_answer
+    prompt: Explain the difference between platform guardrails and manual approval gates.
+    correct_answer:
+      keywords: [automated, policy, enable, reduce friction, manual]
+    explanation: Guardrails automate safe defaults and policy enforcement; manual gates add human checkpoints and should be used selectively for high-risk changes.
+    tags: [platform, policy]
+  - slug: platform-multicloud
+    title: Multi-cloud portability
+    category: platform-engineering
+    difficulty: Advanced
+    type: short_answer
+    prompt: What are realistic limits of multi-cloud portability?
+    correct_answer:
+      keywords: [abstractions, services, networking, data, tradeoffs]
+    explanation: Compute abstractions can help, but managed services, networking, identity, data gravity, cost models, and operational differences limit true portability.
+    tags: [multi-cloud]
+  - slug: platform-product-thinking
+    title: Platform as product
+    category: platform-engineering
+    difficulty: Intermediate
+    type: multiple_choice
+    prompt: What does platform as product imply?
+    choices: [Treat developers as customers and measure adoption/outcomes, Build tools without feedback, Only write YAML, Avoid roadmaps]
+    correct_answer: Treat developers as customers and measure adoption/outcomes
+    explanation: Platform teams should discover user needs, provide reliable capabilities, measure adoption, and iterate like product teams.
+    tags: [platform]
+
+  - slug: cloud-vpc
+    title: VPC segmentation
+    category: cloud-networking
+    difficulty: Intermediate
+    type: short_answer
+    prompt: Why separate public and private subnets in a cloud VPC?
+    correct_answer:
+      keywords: [internet, exposure, routing, security, private]
+    explanation: Public subnets route directly to the internet; private subnets isolate internal workloads and use controlled egress such as NAT or private endpoints.
+    tags: [vpc]
+  - slug: cloud-dns
+    title: DNS debugging
+    category: cloud-networking
+    difficulty: Intermediate
+    type: short_answer
+    prompt: What would you check when an internal service DNS name does not resolve?
+    correct_answer:
+      keywords: [zone, record, resolver, search, network]
+    explanation: Check authoritative zone/record, resolver config, search domain, forwarding rules, network policies/firewalls, and caching.
+    tags: [dns]
+  - slug: cloud-lb-health
+    title: Load balancer health checks
+    category: cloud-networking
+    difficulty: Intermediate
+    type: multiple_choice
+    prompt: Why do load balancer health checks matter?
+    choices: [They prevent traffic to unhealthy targets, They encrypt disks, They create DNS zones, They replace application logs]
+    correct_answer: They prevent traffic to unhealthy targets
+    explanation: Health checks determine which backends can receive traffic.
+    tags: [load-balancer]
+  - slug: cloud-tls
+    title: TLS certificate rotation
+    category: cloud-networking
+    difficulty: Intermediate
+    type: short_answer
+    prompt: What should a safe TLS certificate rotation process include?
+    correct_answer:
+      keywords: [inventory, validation, deploy, rollback, monitoring]
+    explanation: Track certificate inventory, validate chain/hostname, deploy safely, monitor expiry and handshake errors, and keep rollback options.
+    tags: [tls]
+  - slug: cloud-firewall
+    title: Firewall least privilege
+    category: cloud-networking
+    difficulty: Beginner
+    type: multiple_choice
+    prompt: What is the safest default firewall/security group posture?
+    choices: [Deny by default and allow only required traffic, Allow all inbound, Allow all databases from internet, Disable logging]
+    correct_answer: Deny by default and allow only required traffic
+    explanation: Least privilege network access reduces blast radius and accidental exposure.
+    tags: [firewall]
+
+  - slug: design-platform-homelab
+    title: Homelab platform design
+    category: system-design
+    difficulty: Advanced
+    type: scenario
+    prompt: Design a secure Kubernetes homelab platform for GitOps-based application delivery. Mention the main components and tradeoffs.
+    correct_answer:
+      keywords: [gitops, ingress, storage, monitoring, backup, security]
+    explanation: A strong answer covers cluster topology, GitOps, ingress/TLS, storage, backups/DR, monitoring, RBAC, secrets, network policy, and operational tradeoffs.
+    tags: [architecture]
+  - slug: design-ci-runner
+    title: Secure CI runner design
+    category: system-design
+    difficulty: Advanced
+    type: scenario
+    prompt: Design a secure CI runner system for untrusted build jobs.
+    correct_answer:
+      keywords: [isolation, ephemeral, network, secrets, resource limits]
+    explanation: Discuss ephemeral runners, sandboxing, secret scoping, network isolation, resource limits, image provenance, logging, and cleanup.
+    tags: [ci, security]
+  - slug: design-migration
+    title: Cloud migration platform
+    category: system-design
+    difficulty: Advanced
+    type: scenario
+    prompt: How would you design a repeatable cloud migration factory for many apps?
+    correct_answer:
+      keywords: [assessment, landing zone, terraform, pipeline, waves]
+    explanation: Include discovery, landing zones, IaC modules, migration waves, app patterns, security controls, validation, rollback, observability, and governance.
+    tags: [cloud-migration]
+  - slug: design-observability
+    title: Observability platform design
+    category: system-design
+    difficulty: Advanced
+    type: scenario
+    prompt: Design a cluster observability stack for production Kubernetes.
+    correct_answer:
+      keywords: [metrics, logs, traces, alerts, dashboards]
+    explanation: Include metrics, logs, traces, dashboards, alerting, SLOs, retention, cost controls, multi-cluster concerns, and incident workflows.
+    tags: [observability]
+  - slug: design-secrets
+    title: Enterprise secrets platform
+    category: system-design
+    difficulty: Advanced
+    type: scenario
+    prompt: Design a secrets management approach for GitOps-managed Kubernetes apps.
+    correct_answer:
+      keywords: [external secret, vault, rbac, rotation, audit]
+    explanation: Cover external secret stores, sync controllers, RBAC boundaries, rotation, audit, encryption, Git workflow, and emergency revocation.
+    tags: [secrets]
+
+challenges:
+  - slug: bash-auth-log-top-ips
+    title: Parse failed SSH login IPs
+    category: bash
+    difficulty: Intermediate
+    type: bash_challenge
+    prompt: |
+      Write a Bash script that reads auth.log from the current directory and prints the top 5 IP addresses with failed SSH login attempts.
+      The solution should be safe with unset variables and failed pipelines.
+    starter_files:
+      solution.sh: |
+        #!/usr/bin/env bash
+        set -euo pipefail
+        # TODO: parse auth.log
+    test_rules:
+      - name: Uses safer Bash mode
+        type: contains
+        value: set -euo pipefail
+      - name: Uses grep or awk to filter failed logins
+        type: regex
+        pattern: "(grep|awk)"
+      - name: Sorts and counts unique IPs
+        type: regex
+        pattern: "(sort|uniq|awk)"
+      - name: Limits output to five
+        type: regex
+        pattern: "(head -n ?5|NR<=5)"
+    explanation: A strong answer filters failed login rows, extracts IPs, counts unique values, sorts numerically, and prints the top five.
+    tags: [bash, logs]
+  - slug: k8s-fix-readiness-probe
+    title: Fix a readiness probe
+    category: kubernetes-troubleshooting
+    difficulty: Intermediate
+    type: kubernetes_manifest_challenge
+    prompt: |
+      A Deployment should only receive traffic after /healthz returns HTTP 200 on port 8080.
+      Provide the corrected container probe YAML section.
+    starter_files:
+      deployment.yaml: |
+        readinessProbe:
+          httpGet:
+            path: /wrong
+            port: 80
+    test_rules:
+      - name: Uses readinessProbe
+        type: contains
+        value: readinessProbe
+      - name: Checks /healthz
+        type: contains
+        value: /healthz
+      - name: Uses port 8080
+        type: regex
+        pattern: "port:\\s*8080"
+      - name: Uses HTTP GET probe
+        type: contains
+        value: httpGet
+    explanation: Correct readiness probes keep unready pods out of Service endpoints until they can serve traffic.
+    tags: [kubernetes, probes]
+  - slug: k8s-networkpolicy-deny-all
+    title: Write a default deny NetworkPolicy
+    category: kubernetes-security
+    difficulty: Advanced
+    type: kubernetes_manifest_challenge
+    prompt: |
+      Write a NetworkPolicy that selects all pods in the namespace and denies all ingress traffic by default.
+    starter_files:
+      networkpolicy.yaml: |
+        apiVersion: networking.k8s.io/v1
+        kind: NetworkPolicy
+    test_rules:
+      - name: Uses NetworkPolicy kind
+        type: contains
+        value: "kind: NetworkPolicy"
+      - name: Selects all pods
+        type: regex
+        pattern: "podSelector:\\s*\\n\\s*\\{?\\}?"
+      - name: Defines Ingress policy type
+        type: contains
+        value: Ingress
+      - name: Does not allow all CIDRs
+        type: not_contains
+        value: 0.0.0.0/0
+    explanation: A default deny ingress policy selects pods and contains policyTypes ingress without broad allow rules.
+    tags: [networkpolicy, security]
+  - slug: terraform-vpc-module
+    title: Define reusable Terraform module inputs
+    category: terraform
+    difficulty: Intermediate
+    type: terraform_challenge
+    prompt: |
+      Create Terraform variable definitions for a reusable VPC module. It must accept vpc_cidr, public_subnets, private_subnets, and environment.
+    starter_files:
+      variables.tf: |
+        variable "vpc_cidr" {
+          type = string
+        }
+    test_rules:
+      - name: Defines vpc_cidr variable
+        type: regex
+        pattern: "variable\\s+\"vpc_cidr\""
+      - name: Defines public_subnets variable
+        type: regex
+        pattern: "variable\\s+\"public_subnets\""
+      - name: Defines private_subnets variable
+        type: regex
+        pattern: "variable\\s+\"private_subnets\""
+      - name: Defines environment variable
+        type: regex
+        pattern: "variable\\s+\"environment\""
+      - name: Uses typed lists for subnets
+        type: regex
+        pattern: "list\\(string\\)"
+    explanation: Reusable modules should expose typed inputs and avoid hard-coded environment assumptions.
+    tags: [terraform, modules]
+  - slug: ansible-nginx-template
+    title: Ansible handler for nginx config
+    category: ansible
+    difficulty: Intermediate
+    type: ansible_challenge
+    prompt: |
+      Write Ansible tasks that render an nginx config from a Jinja2 template and notify a handler to reload nginx only when the file changes.
+    starter_files:
+      tasks.yml: |
+        - name: Render nginx config
+          ansible.builtin.template:
+    test_rules:
+      - name: Uses template module
+        type: contains
+        value: ansible.builtin.template
+      - name: Defines destination
+        type: regex
+        pattern: "dest:"
+      - name: Notifies handler
+        type: regex
+        pattern: "notify:"
+      - name: Reloads or restarts nginx
+        type: regex
+        pattern: "(reload nginx|restart nginx|state:\\s*reloaded|state:\\s*restarted)"
+    explanation: Handlers avoid unnecessary reloads and preserve idempotent behavior.
+    tags: [ansible, handlers]
+  - slug: linux-systemd-timer
+    title: systemd timer for backups
+    category: linux
+    difficulty: Intermediate
+    type: linux_challenge
+    prompt: |
+      Write a systemd timer that runs etcd-backup.service every 6 hours and persists missed runs after boot.
+    starter_files:
+      etcd-backup.timer: |
+        [Unit]
+        Description=Run etcd backup every 6 hours
+    test_rules:
+      - name: Has Timer section
+        type: contains
+        value: "[Timer]"
+      - name: Runs every 6 hours
+        type: regex
+        pattern: "OnUnitActiveSec=6h|OnCalendar=.*\\*/6"
+      - name: Enables persistence
+        type: contains
+        value: Persistent=true
+      - name: References service
+        type: contains
+        value: Unit=etcd-backup.service
+    explanation: Persistent timers catch up missed runs after downtime, useful for backup jobs.
+    tags: [systemd, backup]
+  - slug: gitops-argocd-app
+    title: Argo CD Application for a Helm chart
+    category: gitops-cicd
+    difficulty: Intermediate
+    type: yaml_challenge
+    prompt: |
+      Write an Argo CD Application manifest that deploys the skillforge Helm chart from the deploy/helm/skillforge path into the skillforge namespace.
+    starter_files:
+      application.yaml: |
+        apiVersion: argoproj.io/v1alpha1
+        kind: Application
+    test_rules:
+      - name: Uses Application kind
+        type: contains
+        value: "kind: Application"
+      - name: References chart path
+        type: contains
+        value: deploy/helm/skillforge
+      - name: Targets namespace
+        type: contains
+        value: "namespace: skillforge"
+      - name: Uses automated sync policy or sync policy block
+        type: regex
+        pattern: "syncPolicy:"
+    explanation: The Application should point at the Git repo/path and let Argo CD reconcile the namespace state.
+    tags: [argocd, helm]
+  - slug: sre-prometheus-alert
+    title: Prometheus alert for pod crash loops
+    category: observability-sre
+    difficulty: Advanced
+    type: yaml_challenge
+    prompt: |
+      Write a Prometheus alert rule that fires when a container has restarted more than 5 times in 10 minutes.
+    starter_files:
+      rule.yaml: |
+        groups:
+          - name: kubernetes-workloads
+    test_rules:
+      - name: Defines alert
+        type: regex
+        pattern: "alert:"
+      - name: Uses restart metric
+        type: contains
+        value: kube_pod_container_status_restarts_total
+      - name: Has threshold greater than five
+        type: regex
+        pattern: ">\\s*5"
+      - name: Has duration or range window
+        type: regex
+        pattern: "(for:|\\[10m\\])"
+    explanation: Alerting on restart increases over a window is better than alerting on raw restart counters.
+    tags: [prometheus, alerting]

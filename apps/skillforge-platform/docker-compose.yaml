@@ -1,0 +1,58 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: skillforge
+      POSTGRES_USER: skillforge
+      POSTGRES_PASSWORD: skillforge_dev_password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U skillforge -d skillforge"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+
+  skillforge-api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      DATABASE_URL: postgresql+psycopg2://skillforge:skillforge_dev_password@postgres:5432/skillforge
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    ports:
+      - "8000:8000"
+
+  skillforge-worker:
+    build:
+      context: .
+      dockerfile: worker/Dockerfile
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      RUNNER_MODE: static-placeholder
+    depends_on:
+      - redis
+
+  skillforge-web:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    depends_on:
+      - skillforge-api
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres-data:
+  redis-data:

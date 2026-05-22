@@ -1,0 +1,6 @@
+apiVersion: v2
+name: skillforge
+version: 0.1.0
+appVersion: "0.1.1"
+description: Kubernetes-native interview training platform for platform engineering roles.
+type: application

@@ -1,0 +1,29 @@
+{{- if .Values.graders.createKubernetesJobs }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: skillforge-grader-job-manager
+  labels:
+    {{- include "skillforge.labels" . | nindent 4 }}
+rules:
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["create", "get", "list", "watch", "delete"]
+  - apiGroups: [""]
+    resources: ["pods", "pods/log"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: skillforge-grader-job-manager
+  labels:
+    {{- include "skillforge.labels" . | nindent 4 }}
+subjects:
+  - kind: ServiceAccount
+    name: skillforge-worker
+roleRef:
+  kind: Role
+  name: skillforge-grader-job-manager
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}

@@ -1,0 +1,99 @@
+replicaCount:
+  web: 1
+  api: 1
+  worker: 1
+
+imagePullSecrets: []
+
+images:
+  web:
+    repository: ghcr.io/YOUR_GITHUB_USER/skillforge-web
+    tag: "0.1.1"
+    pullPolicy: IfNotPresent
+  api:
+    repository: ghcr.io/YOUR_GITHUB_USER/skillforge-api
+    tag: "0.1.1"
+    pullPolicy: IfNotPresent
+  worker:
+    repository: ghcr.io/YOUR_GITHUB_USER/skillforge-worker
+    tag: "0.1.1"
+    pullPolicy: IfNotPresent
+
+service:
+  web:
+    type: ClusterIP
+    port: 8080
+    nodePort: null
+  api:
+    port: 8000
+
+postgres:
+  enabled: true
+  image: postgres:16-alpine
+  database: skillforge
+  username: skillforge
+  password: change-me-in-external-secret
+  storageClassName: longhorn
+  storageSize: 10Gi
+
+redis:
+  enabled: true
+  image: redis:7-alpine
+  storageSize: 2Gi
+  storageClassName: longhorn
+
+env:
+  runnerMode: static-placeholder
+
+resources:
+  web:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
+  api:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 768Mi
+  worker:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  runAsGroup: 10001
+  fsGroup: 10001
+
+podSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: false
+  capabilities:
+    drop: ["ALL"]
+
+networkPolicy:
+  enabled: true
+
+ingress:
+  enabled: false
+  className: ""
+  hosts:
+    - host: skillforge.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+graders:
+  createKubernetesJobs: false
+  jobNamespace: skillforge
+  jobImage: alpine:3.20
