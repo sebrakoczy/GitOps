@@ -14,7 +14,7 @@ images:
     tag: "0.2.1"
   worker:
     repository: ghcr.io/sebrakoczy/skillforge-worker
-    tag: "0.2.1"
+    tag: "0.2.2"
 
 postgres:
   password: replace-with-external-secret-or-sealed-secret
