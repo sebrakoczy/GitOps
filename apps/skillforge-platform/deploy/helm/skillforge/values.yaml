@@ -12,7 +12,7 @@ images:
     pullPolicy: IfNotPresent
   api:
     repository: ghcr.io/sebrakoczy/skillforge-api
-    tag: "0.2.2"
+    tag: "0.2.1"
     pullPolicy: IfNotPresent
   worker:
     repository: ghcr.io/sebrakoczy/skillforge-worker
