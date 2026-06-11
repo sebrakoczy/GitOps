@@ -188,3 +188,4 @@ Recommended next iterations:
 - Optional CiliumNetworkPolicy allows LAN access for Cilium default-deny clusters.
 
 Upgrade details are in `docs/V0.2_PRODUCT_UPGRADE.md`.
+# ephemeral env test
