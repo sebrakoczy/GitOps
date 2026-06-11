@@ -8,13 +8,13 @@ service:
 images:
   web:
     repository: ghcr.io/sebrakoczy/skillforge-web
-    tag: "0.2.2"
+    tag: "ce1ed9b"
   api:
     repository: ghcr.io/sebrakoczy/skillforge-api
-    tag: "0.2.1"
+    tag: "ce1ed9b"
   worker:
     repository: ghcr.io/sebrakoczy/skillforge-worker
-    tag: "0.2.2"
+    tag: "ce1ed9b"
 
 postgres:
   password: replace-with-external-secret-or-sealed-secret
